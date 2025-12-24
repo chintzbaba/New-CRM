@@ -39,6 +39,43 @@ app.post("/customers", (req, res) => {
   res.status(201).json(newCustomer);
 });
 
+app.delete("/customers/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const initialLength = customers.length;
+  customers = customers.filter((c) => c.id !== id);
+
+  if (customers.length === initialLength) {
+    return res.status(404).json({ error: "Customer not found" });
+  }
+
+  res.status(204).send();
+});
+
+app.put("/customers/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const { name, phone, email } = req.body;
+
+  if (!name || !phone || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const index = customers.findIndex((c) => c.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Customer not found" });
+  }
+
+  customers[index] = {
+    ...customers[index],
+    name,
+    phone,
+    email,
+  };
+
+  res.json(customers[index]);
+});
+
 
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);

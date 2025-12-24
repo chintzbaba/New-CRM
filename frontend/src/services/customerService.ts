@@ -34,6 +34,35 @@ export async function addCustomer(customer: Omit<Customer, "id">): Promise<Custo
   return response.json();
 }
 
+export async function deleteCustomer(id: number): Promise<void> {
+  const response = await fetch(`http://localhost:5000/customers/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete customer");
+  }
+}
+
+export async function updateCustomer(
+  id: number,
+  customer: Omit<Customer, "id">
+): Promise<Customer> {
+  const response = await fetch(`http://localhost:5000/customers/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(customer),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update customer");
+  }
+
+  return response.json();
+}
+
 
 export function saveCustomers(customers: Customer[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));

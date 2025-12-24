@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import CustomerForm from "../components/CustomerForm";
-import { getCustomers, saveCustomers, addCustomer } from "../services/customerService";
+import { getCustomers, addCustomer, deleteCustomer, updateCustomer, } from "../services/customerService";
 import type { Customer } from "../services/customerService";
 
 
@@ -28,11 +28,11 @@ export default function Customers() {
   }, []);
 
   // Persist locally for now (temporary hybrid step)
-  useEffect(() => {
-    if (!loading) {
-      saveCustomers(customers);
-    }
-  }, [customers, loading]);
+  //useEffect(() => {
+    //if (!loading) {
+      //saveCustomers(customers);
+    //}
+ // }, [customers, loading]);
 
   const handleAddCustomer = async () => {
 
@@ -42,25 +42,40 @@ export default function Customers() {
       addCustomer({ name, phone, email }).then((createdCustomer) => {
         setCustomers((prev) => [...prev, createdCustomer]);
       });
-    }
+    } 
     
     else {
-      setCustomers((prev) =>
-        prev.map((c) =>
-          c.id === editingCustomerId ? { ...c, name, phone, email } : c
-        )
-      );
-      setEditingCustomerId(null);
-    }
+        try {
+          const updated = await updateCustomer(editingCustomerId, {
+            name,
+            phone,
+            email,
+          });
+
+          setCustomers((prev) =>
+            prev.map((c) => (c.id === updated.id ? updated : c))
+          );
+
+          setEditingCustomerId(null);
+        } catch (error) {
+          console.error("Update failed", error);
+        }
+      }
 
     setName("");
     setPhone("");
     setEmail("");
   };
 
-  const handleDeleteCustomer = (id: number) => {
+  const handleDeleteCustomer = async (id: number) => {
+  try {
+    await deleteCustomer(id);
     setCustomers((prev) => prev.filter((c) => c.id !== id));
-  };
+  } catch (error) {
+    console.error("Delete failed", error);
+  }
+};
+
 
   const filteredCustomers = customers.filter(
     (customer) =>
