@@ -15,6 +15,8 @@ export default function MainLayout() {
         <nav style={{ display: "flex", gap: "16px" }}>
           <Link to="/">Dashboard</Link>
           <Link to="/customers">Customers</Link>
+          <Link to="/jobs">Jobs</Link>
+
         </nav>
       </header>
 
