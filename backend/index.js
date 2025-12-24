@@ -17,6 +17,28 @@ app.get("/customers", (req, res) => {
   res.json(customers);
 });
 
+app.post("/customers", (req, res) => {
+  console.log("POST /customers body:", req.body);
+  const { name, phone, email } = req.body;
+
+  if (!name || !phone) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const newCustomer = {
+    id: Date.now(),
+    name,
+    phone,
+    email,
+  };
+
+  customers.push(newCustomer);
+
+  console.log("Customers after insert:", customers);
+
+  res.status(201).json(newCustomer);
+});
+
 
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);

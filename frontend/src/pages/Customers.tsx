@@ -1,10 +1,13 @@
 // Backend now created and using async for data management - No Database connectivity yet
 
+
 import { useEffect, useState } from "react";
 import CustomerForm from "../components/CustomerForm";
-import { getCustomers, saveCustomers } from "../services/customerService";
+import { getCustomers, saveCustomers, addCustomer } from "../services/customerService";
 import type { Customer } from "../services/customerService";
 
+
+//Defines content of customers page
 export default function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,18 +34,17 @@ export default function Customers() {
     }
   }, [customers, loading]);
 
-  const handleAddCustomer = () => {
-    if (!name || !phone || !email) return;
+  const handleAddCustomer = async () => {
+
+    if (!name || !phone) return;
 
     if (editingCustomerId === null) {
-      const newCustomer: Customer = {
-        id: Date.now(),
-        name,
-        phone,
-        email,
-      };
-      setCustomers((prev) => [...prev, newCustomer]);
-    } else {
+      addCustomer({ name, phone, email }).then((createdCustomer) => {
+        setCustomers((prev) => [...prev, createdCustomer]);
+      });
+    }
+    
+    else {
       setCustomers((prev) =>
         prev.map((c) =>
           c.id === editingCustomerId ? { ...c, name, phone, email } : c

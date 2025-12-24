@@ -12,6 +12,28 @@ export async function getCustomers(): Promise<Customer[]> {
   return response.json();
 }
 
+// Add a new customer function
+//Takes customer data without id
+//Backend generates the id
+//Returns the created customer
+//This mirrors real production APIs
+
+export async function addCustomer(customer: Omit<Customer, "id">): Promise<Customer> {
+  const response = await fetch("http://localhost:5000/customers", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(customer),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add customer");
+  }
+
+  return response.json();
+}
+
 
 export function saveCustomers(customers: Customer[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
