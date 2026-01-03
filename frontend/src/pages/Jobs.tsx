@@ -6,6 +6,13 @@ import JobForm from "../components/JobForm";
 import { addJob } from "../services/jobService";
 import { getCustomers } from "../services/customerService";
 
+function calculateProfit(form: JobFormState): number {
+  return (
+    (form.product_price + form.service_price) -
+    (form.product_cost + form.service_cost)
+  );
+}
+
 //
 type JobFormState = {
   customer_id: number | "";
@@ -18,7 +25,7 @@ type JobFormState = {
   product_cost: number;
   service_cost: number;
   remarks: string;
-  profit: number;
+// profit: number; - removing profit field from jobForm so it can be calculated on backend automatically without relying on frontend input from user
 };
 
 
@@ -38,7 +45,7 @@ export default function Jobs() {
     product_cost: 0,
     service_cost: 0,
     remarks: "",
-    profit: 0,
+    //profit: 0,
     });
 
   useEffect(() => {
@@ -58,14 +65,21 @@ export default function Jobs() {
 }, []);
 
 const handleJobChange = (
-  field: keyof JobFormState,
+  field: string,
   value: string | number
 ) => {
-  setJobForm((prev) => ({ ...prev, [field]: value }));
+  if (!(field in jobForm)) return;
+
+  setJobForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
 };
 
 const handleAddJob = async () => {
-  const newJob = await addJob({
+  const profit = calculateProfit(jobForm);
+
+const newJob = await addJob({
   customer_id: jobForm.customer_id as number,
   job_date: jobForm.job_date,
   category: jobForm.category,
@@ -76,7 +90,8 @@ const handleAddJob = async () => {
   product_cost: jobForm.product_cost,
   service_cost: jobForm.service_cost,
   remarks: jobForm.remarks,
-  profit: jobForm.profit,
+  profit,
+  //profit: jobForm.profit, removing profit field from jobForm so it can be calculated on backend automatically without relying on frontend input from user
 });
 
   setJobs((prev) => [newJob, ...prev]);
@@ -92,7 +107,7 @@ const handleAddJob = async () => {
     product_cost: 0,
     service_cost: 0,
     remarks: "",
-    profit: 0,
+    //profit: 0, - removing profit field from jobForm so it can be calculated on backend automatically without relying on frontend input from user
   });
 };
 
@@ -117,7 +132,7 @@ const handleAddJob = async () => {
             productCost={jobForm.product_cost}
             serviceCost={jobForm.service_cost}
             remarks={jobForm.remarks}
-            profit={jobForm.profit}
+            //profit={jobForm.profit} - removing profit field from jobForm so it can be calculated on backend automatically without relying on frontend input from user
             onChange={handleJobChange}
             onSubmit={handleAddJob}
         />

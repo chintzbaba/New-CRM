@@ -1,16 +1,3 @@
-type JobFormField =
-  | "customer_id"
-  | "job_date"
-  | "category"
-  | "description"
-  | "units"
-  | "product_price"
-  | "service_price"
-  | "product_cost"
-  | "service_cost"
-  | "remarks"
-  | "profit";
-
 type JobFormValue = string | number;
 
 type JobFormProps = {
@@ -25,11 +12,9 @@ type JobFormProps = {
   productCost: number;
   serviceCost: number;
   remarks: string;
-  profit: number;
-  onChange: (field: JobFormField, value: JobFormValue) => void;
+  onChange: (field: string, value: JobFormValue) => void;
   onSubmit: () => void;
 };
-
 
 
 
@@ -45,7 +30,6 @@ export default function JobForm({
   productCost,
   serviceCost,
   remarks,
-  profit,
   onChange,
   onSubmit,
 }: JobFormProps) {
@@ -130,13 +114,7 @@ export default function JobForm({
         onChange={(e) => onChange("remarks", e.target.value)}
       />
 
-      <input
-        type="number"
-        placeholder="Profit"
-        value={profit}
-        onChange={(e) => onChange("profit", Number(e.target.value))}
-      />
-
+      
       <button
         onClick={onSubmit}
         disabled={!customerId || !jobDate || !category || !description}
